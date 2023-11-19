@@ -1,10 +1,10 @@
 def find_solution(initial_state,goal,method):
     if method=="DFS":
-        print("1.DFS")
+        print("--1.DFS--")
     elif method=="BFS":
-        print("2.BFS")
+        print("--2.BFS--")
     elif method=="--":
-        print("3.---")
+        print("--3.-----")
 
 def main():
 
@@ -18,18 +18,17 @@ def main():
         option= input()
         if option=="1" :
             method="DFS"
-            find_solution(initial_state,goal,method)
             break
         elif option=="2":
             method="BFS"
-            find_solution(initial_state,goal,method)
             break
         elif option=="3":
             method="---"
-            find_solution(initial_state,goal,method)
             break
         else:
             print("Wrong input")
-
+            
+    find_solution(initial_state,goal,method)
+        
 if __name__ == "__main__":
     main()
