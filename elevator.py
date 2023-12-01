@@ -1,6 +1,25 @@
 import copy
 import sys 
 
+
+def find_children(state):
+    
+    children=[]
+    
+       
+    floor1_state=copy.deepcopy(state)
+    floor1_child=go_to_floor1(floor1_state)
+    
+    
+
+    
+
+    if floor1_child!=None: 
+        children.append(floor1_child)
+        
+    return children
+
+
 #Initialization of queue
 def make_queue(state):
     return [[state]]
