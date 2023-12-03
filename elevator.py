@@ -1,7 +1,6 @@
 import copy
 import sys 
 
-
 def find_children(state):
     
     children=[]
@@ -18,7 +17,6 @@ def find_children(state):
         children.append(floor1_child)
         
     return children
-
 
 #Initialization of queue
 def make_queue(state):
@@ -78,7 +76,7 @@ def expand_front(front, method):
     return front
 
 def go_to_floor1(state):
-    if state[5]<8 and state[1]>0:
+    if state[5]<8 and state[1]>0 and state[0]!=1:
         if state[1]>8-state[5]:
             new_state = [1] + [state[1] + state[5] - 8] + [state[2]] + [state[3]] + [state[4]] + [8]
         else:
@@ -86,7 +84,7 @@ def go_to_floor1(state):
         return new_state
 
 def go_to_floor2(state):
-    if state[5]<8 and state[2]>0:
+    if state[5]<8 and state[2]>0 and state[0]!=2:
         if state[2]>8-state[5]:
             new_state = [2] + state[1] + [state[2] + state[5] - 8] + [state[3]] + [state[4]] + [8]
         else:
@@ -94,7 +92,7 @@ def go_to_floor2(state):
         return new_state
 
 def go_to_floor3(state):
-    if state[5]<8 and state[3]>0:
+    if state[5]<8 and state[3]>0 and state[0]!=3:
         if state[3]>8-state[5]:
             new_state = [3] + state[1] + [state[2]] + [state[3] + state[5] - 8] + [state[4]] + [8]
         else:
@@ -102,7 +100,7 @@ def go_to_floor3(state):
         return new_state
 
 def go_to_floor4(state):
-    if state[5]<8 and state[4]>0:
+    if state[5]<8 and state[4]>0 and state[0]!=4:
         if state[4]>8-state[5]:
             new_state = [4] + [state[1]] + [state[2]] + [state[3]] + [state[4] + state[5] - 8] + [8]
         else:
@@ -110,7 +108,7 @@ def go_to_floor4(state):
         return new_state
 
 def go_to_roof(state):
-    if state[5]>8 :
+    if state[5]>8 and state[1]!=5:
         new_state = [5] + [state[1]] + [state[2]] + [state[3]] + [state[4]] + [0]    
     return new_state
 
@@ -130,7 +128,7 @@ def main():
     while 1:
         print("This program solves the problem of evacuating a building to the roof using different searching algorithms.")
         print("Select between the given searching algorithms:")
-        print("1.DFS (Depth First Search)\n2.BFS (Breadth First Search)\n3.---")
+        print("1. DFS (Depth First Search)\n2. BFS (Breadth First Search)\n3. ---\n4. Exit")
         print("Select option:")
         option= input()
         if option=="1" :
@@ -142,9 +140,11 @@ def main():
         elif option=="3":
             method="---"
             break
+        elif option=="4":
+            exit()
         else:
-            print("Wrong input")
-            
+            print("Wrong input")    
+
     find_solution(initial_state,goal,method)
         
 if __name__ == "__main__":
