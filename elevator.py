@@ -1,3 +1,12 @@
+""" ----------------------------------------------------------------------------
+****        Τεχνητή Νοημοσύνη 
+****        Απαλλακτική Εργασία Εξαμήνου
+****        Μέρος Ι: Ομαδικη Εργασία 
+****        "Το πρόβλημα της εκκένωσης κτηρίου προς την ταράτσα"
+****        Μέλη Ομάδας:
+****        Ελένη Βέρα                   18390152
+****        Χριστίνα Αχιλλεοπούλου       18390182
+------------------------------------------------------------------------------"""
 import copy
 import sys 
 
@@ -5,18 +14,37 @@ def find_children(state):
     
     children=[]
     
-       
     floor1_state=copy.deepcopy(state)
     floor1_child=go_to_floor1(floor1_state)
     
+    floor2_state=copy.deepcopy(state)
+    floor2_child=go_to_floor2(floor2_state)
     
-
+    floor3_state=copy.deepcopy(state)
+    floor3_child=go_to_floor3(floor3_state)
     
+    floor4_state=copy.deepcopy(state)
+    floor4_child=go_to_floor4(floor4_state)
+    
+    roof_state=copy.deepcopy(state)
+    roof_child=go_to_roof(roof_state)
 
     if floor1_child!=None: 
         children.append(floor1_child)
         
-    return children
+    if floor2_child!=None: 
+        children.append(floor2_child)
+
+    if floor3_child!=None: 
+        children.append(floor3_child)
+
+    if floor4_child!=None: 
+        children.append(floor4_child)
+
+    if roof_child!=None: 
+        children.append(roof_child)
+    
+    return children 
 
 #Initialization of queue
 def make_queue(state):
@@ -45,8 +73,7 @@ def extend_queue(queue, method):
             path = copy.deepcopy(node)
             path.append(child)
             queue_copy.append(path)
-    elif method=='---':
-        print(".......")
+    #elif method=='---':
     
     return queue_copy
 
@@ -70,8 +97,8 @@ def expand_front(front, method):
             node = front.pop(0)
             for child in find_children(node):     
                 front.append(child)
-    elif method=='---':      
-        print("......")
+    #elif method=='---':      
+        
 
     return front
 
@@ -86,17 +113,17 @@ def go_to_floor1(state):
 def go_to_floor2(state):
     if state[5]<8 and state[2]>0 and state[0]!=2:
         if state[2]>8-state[5]:
-            new_state = [2] + state[1] + [state[2] + state[5] - 8] + [state[3]] + [state[4]] + [8]
+            new_state = [2] + [state[1]] + [state[2] + state[5] - 8] + [state[3]] + [state[4]] + [8]
         else:
-            new_state = [2] + state[1] + [0] + [state[3]] + [state[4]] + [state[2] + state[5]]
+            new_state = [2]+ [state[1]] + [0] + [state[3]] + [state[4]] + [state[2] + state[5]]
         return new_state
 
 def go_to_floor3(state):
     if state[5]<8 and state[3]>0 and state[0]!=3:
         if state[3]>8-state[5]:
-            new_state = [3] + state[1] + [state[2]] + [state[3] + state[5] - 8] + [state[4]] + [8]
+            new_state = [3] + [state[1]] + [state[2]] + [state[3] + state[5] - 8] + [state[4]] + [8]
         else:
-            new_state = [3] + state[1] + [state[2]] + [0] + [state[4]] + [state[3] + state[5]]
+            new_state = [3] + [state[1]] + [state[2]] + [0] + [state[4]] + [state[3] + state[5]]
         return new_state
 
 def go_to_floor4(state):
@@ -108,17 +135,35 @@ def go_to_floor4(state):
         return new_state
 
 def go_to_roof(state):
-    if state[5]>8 and state[1]!=5:
-        new_state = [5] + [state[1]] + [state[2]] + [state[3]] + [state[4]] + [0]    
+    if state[5]==8 or (state[1]==0 and state[2]==0 and state[3]==0 and state[4]==0) and state[1]!=5:
+        new_state = [5] + [state[1]] + [state[2]] + [state[3]] + [state[4]] + [0]
+    else :
+        new_state=None    
     return new_state
 
-def find_solution(initial_state,goal,method):
-    if method=='DFS':
-        print("--1.DFS--")
-    elif method=='BFS':
-        print("--2.BFS--")
-    elif method=='---':
-        print("--3.-----")
+def find_solution(front, queue, closed, goal, method):
+   
+    if not front:
+        print('_NO_SOLUTION_FOUND_')
+    
+    elif front[0] in closed:
+        new_front=copy.deepcopy(front)
+        new_front.pop(0)
+        new_queue=copy.deepcopy(queue)
+        new_queue.pop(0)
+        find_solution(new_front, new_queue, closed, goal, method)
+    elif front[0]==goal:
+        print('_GOAL_FOUND_')
+        print(front[0])
+        print(queue[0])
+    else:
+        closed.append(front[0])
+        front_copy=copy.deepcopy(front)
+        front_children=expand_front(front_copy, method)
+        queue_copy=copy.deepcopy(queue)
+        queue_children=extend_queue(queue_copy, method)
+        closed_copy=copy.deepcopy(closed)
+        find_solution(front_children, queue_children, closed_copy, goal, method)
 
 def main():
 
@@ -139,13 +184,15 @@ def main():
             break
         elif option=="3":
             method="---"
-            break
+            #break
+            exit()
         elif option=="4":
+            print("Exiting...")
             exit()
         else:
             print("Wrong input")    
 
-    find_solution(initial_state,goal,method)
+    find_solution(make_front(initial_state),make_queue(initial_state),[],goal,method)
         
 if __name__ == "__main__":
     main()
