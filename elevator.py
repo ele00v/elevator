@@ -8,9 +8,13 @@
 ****        Χριστίνα Αχιλλεοπούλου       18390182
 ------------------------------------------------------------------------------"""
 import copy
+ 
+def tenants_sum(state):
+    total=sum(state[1:5])
+    #print("\ntotal:",total)
+    return total
 
 def find_children(state):
-    
     children=[]
     
     floor1_state=copy.deepcopy(state)
@@ -61,7 +65,6 @@ def extend_queue(queue, method):
             path=copy.deepcopy(node)
             path.append(child)
             queue_copy.insert(0,path)
-    
     elif method=='BFS':
         print("Queue:")
         print(queue)
@@ -72,8 +75,8 @@ def extend_queue(queue, method):
             path = copy.deepcopy(node)
             path.append(child)
             queue_copy.append(path)
-    #elif method=='---':
-    
+    #elif method=='BestFS':
+       
     return queue_copy
 
 #Initialization of front
@@ -82,7 +85,7 @@ def make_front(state):
 
 #Expanding front
 def expand_front(front, method):  
-    if method=='DFS':        
+    if method=='DFS':    
         if front:
             print("Front:")
             print(front)
@@ -96,9 +99,8 @@ def expand_front(front, method):
             node = front.pop(0)
             for child in find_children(node):     
                 front.append(child)
-    #elif method=='---':      
-        
-
+    #elif method=='BestFS':   
+    
     return front
 
 def go_to_floor1(state):
@@ -108,7 +110,7 @@ def go_to_floor1(state):
         else:
             new_state = [1] + [0] + [state[2]] + [state[3]] + [state[4]] + [state[1] + state[5]]
         return new_state
-
+        
 def go_to_floor2(state):
     if state[5]<8 and state[2]>0 and state[0]!=2:
         if state[2]>8-state[5]:
@@ -172,7 +174,7 @@ def main():
     while 1:
         print("This program solves the problem of evacuating a building to the roof using different searching algorithms.")
         print("Select between the given searching algorithms:")
-        print("1. DFS (Depth First Search)\n2. BFS (Breadth First Search)\n3. ---\n4. Exit")
+        print("1. DFS (Depth First Search)\n2. BFS (Breadth First Search)\n3. BestFS (Best-First)\n4. Exit")
         print("Select option:")
         option= input()
         if option=="1" :
@@ -182,7 +184,7 @@ def main():
             method="BFS"
             break
         elif option=="3":
-            method="---"
+            method="BestFS"
             #break
             exit()
         elif option=="4":
@@ -190,7 +192,7 @@ def main():
             exit()
         else:
             print("Wrong input")    
-
+    print("Begin Searching\n---",method,"---")
     find_solution(make_front(initial_state),make_queue(initial_state),[],goal,method)
         
 if __name__ == "__main__":
