@@ -10,8 +10,7 @@
 import copy
  
 def tenants_sum(state):
-    total=sum(state[1:5])
-    #print("\ntotal:",total)
+    total = sum(state[1:5])
     return total
 
 def find_children(state):
@@ -75,8 +74,16 @@ def extend_queue(queue, method):
             path = copy.deepcopy(node)
             path.append(child)
             queue_copy.append(path)
-    #elif method=='BestFS':
-       
+    elif method=='HC':
+        print("Queue:")
+        print(queue)
+        node = queue.pop(0)                 # Αφαιρώ την 1η κατάσταση από το μέτωπο
+        queue_copy = copy.deepcopy(queue)
+        children = find_children(node[-1])
+        for child in children:
+            path = copy.deepcopy(node)      # Αντιγράφω το μονοπάτι το οποίο βρέθηκε και το προσθέτω στην λίστα path
+            path.append(child)
+            queue_copy.insert(0, path)
     return queue_copy
 
 #Initialization of front
@@ -99,8 +106,19 @@ def expand_front(front, method):
             node = front.pop(0)
             for child in find_children(node):     
                 front.append(child)
-    #elif method=='BestFS':   
-    
+    elif method=='HC':
+        if front:
+            print("Front:")
+            print(front)
+            children = []
+            node = front.pop(0)                # Βγάζω την 1η κατάσταση από το μέτωπο
+            for child in find_children(node):  # και βρίσκω τα παιδιά της node(της 1ης κατάστασης του μετώπου).
+                children.append(child)         # Αποθηκεύομαι τα παιδιά σε μία λίστα children
+            if children != 0:                  # Εφόσον υπάρχουν παιδιά, θα ταξινομίσουμε την λίστα sorted_children
+                i = len(children)              # και έπειτα θα τα καταχωρίσουμε με την σωστή σειρά στην front
+                sorted_children = sorted(children, key=tenants_sum)
+                for z in range(i):
+                    front.insert(z, sorted_children[z])
     return front
 
 def go_to_floor1(state):
@@ -174,7 +192,7 @@ def main():
     while 1:
         print("This program solves the problem of evacuating a building to the roof using different searching algorithms.")
         print("Select between the given searching algorithms:")
-        print("1. DFS (Depth First Search)\n2. BFS (Breadth First Search)\n3. BestFS (Best-First)\n4. Exit")
+        print("1. DFS (Depth First Search)\n2. BFS (Breadth First Search)\n3. HC (Hill Climbing)\n4. Exit")
         print("Select option:")
         option= input()
         if option=="1" :
@@ -184,9 +202,8 @@ def main():
             method="BFS"
             break
         elif option=="3":
-            method="BestFS"
-            #break
-            exit()
+            method="HC"
+            break
         elif option=="4":
             print("Exiting...")
             exit()
