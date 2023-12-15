@@ -1,21 +1,28 @@
 """ ----------------------------------------------------------------------------
+****        Πανεπιστήμιο Δυτικής Αττικής
+****        Τμήμα Μηχανικών Πληροφορικής & Υπολογιστών
+***         Ακαδημαϊκό έτος: 2023-2024 | 5ο εξάμηνο
+
 ****        Τεχνητή Νοημοσύνη 
 ****        Απαλλακτική Εργασία Εξαμήνου
-****        Μέρος Ι: Ομαδικη Εργασία 
+****        Μέρος Ι: Ομαδικη Εργασία, 2 ατόμων 
 ****        "Το πρόβλημα της εκκένωσης κτηρίου προς την ταράτσα"
+****
 ****        Μέλη Ομάδας:
-****        Ελένη Βέρα                   18390152
+****        Ελένη Βέρα                   18390152 
 ****        Χριστίνα Αχιλλεοπούλου       18390182
 ------------------------------------------------------------------------------"""
 import copy
- 
-def tenants_sum(state):
+
+#Αθροισμα ενοίκων στους ορόφους (1ος έως 4ος)
+def tenants(state):
     total = sum(state[1:5])
     return total
 
+#Συνάρτηση  ευρεσης απογόνων (find_children)
 def find_children(state):
     children=[]
-    
+    #Κλήση των τελεστών μετάβασης
     floor1_state=copy.deepcopy(state)
     floor1_child=go_to_floor1(floor1_state)
     
@@ -30,7 +37,7 @@ def find_children(state):
     
     roof_state=copy.deepcopy(state)
     roof_child=go_to_roof(roof_state)
-
+    #Προσθήκη των παιδιών που δημιουργήθηκαν στην λίστα children
     if floor1_child!=None: 
         children.append(floor1_child)
         
@@ -48,79 +55,81 @@ def find_children(state):
     
     return children 
 
-#Initialization of queue
+#Αρχικοποίηση ουράς
 def make_queue(state):
     return [[state]]
 
-#Expanding queue
+#Επέκταση ουράς
 def extend_queue(queue, method):
     if method=='DFS':
-        print("Queue:")
-        print(queue)
-        node=queue.pop(0)
-        queue_copy=copy.deepcopy(queue)
-        children=find_children(node[-1])
-        for child in children:
+        print("Queue:")                                     #Εμφάνιση ουράς         
+        print(queue)            
+        node=queue.pop(0)                                   #Αφαίρεση της πρώτης κατάστασης απο την ουρά
+        queue_copy=copy.deepcopy(queue)                     #Δημιουργία αντίγραφου της ουράς (queue_copy)
+        children=find_children(node[-1])                    #Κλήση της συνάρτησης εύρεσης απογόνων 
+        for child in children:                              #Επέκταση της ουράς 
             path=copy.deepcopy(node)
             path.append(child)
             queue_copy.insert(0,path)
     elif method=='BFS':
-        print("Queue:")
+        print("Queue:")                                     #Εμφάνιση ουράς  
         print(queue)
-        node = queue.pop(0)
-        queue_copy = copy.deepcopy(queue)
-        children = find_children(node[-1])
-        for child in children:
-            path = copy.deepcopy(node)
+        node = queue.pop(0)                                 #Αφαίρεση της πρώτης κατάστασης απο την ουρά
+        queue_copy = copy.deepcopy(queue)                   #Δημιουργία αντίγραφου της ουράς (queue_copy)
+        children = find_children(node[-1])                  #Κλήση της συνάρτησης εύρεσης απογόνων 
+        for child in children:                              #Επέκταση της ουράς 
+            path = copy.deepcopy(node)                      
             path.append(child)
             queue_copy.append(path)
     elif method=='HC':
-        print("Queue:")
-        print(queue)
-        node = queue.pop(0)                 # Αφαιρώ την 1η κατάσταση από το μέτωπο
-        queue_copy = copy.deepcopy(queue)
-        children = find_children(node[-1])
-        for child in children:
-            path = copy.deepcopy(node)      # Αντιγράφω το μονοπάτι το οποίο βρέθηκε και το προσθέτω στην λίστα path
+        print("Queue:")                                     #Εμφάνιση ουράς  
+        print(queue)    
+        node = queue.pop(0)                                 #Αφαίρεση της πρώτης κατάστασης απο την ουρά
+        queue_copy = copy.deepcopy(queue)                   #Δημιουργία αντίγραφου της ουράς (queue_copy)
+        children = find_children(node[-1])                  #Κλήση της συνάρτησης εύρεσης απογόνων
+        for child in children:                              #Επέκταση της ουράς 
+            path = copy.deepcopy(node)
             path.append(child)
             queue_copy.insert(0, path)
     return queue_copy
 
-#Initialization of front
+#Αρχικοποίηση μετώπου
 def make_front(state):
     return [state]
 
-#Expanding front
+#Επέκταση μετώπου
 def expand_front(front, method):  
     if method=='DFS':    
-        if front:
+        if front:                                           #Αν το μέτωπο δεν είναι κενό 
             print("Front:")
-            print(front)
-            node=front.pop(0)
-            for child in find_children(node):     
-                front.insert(0,child)
+            print(front)                                    #Εμφάνιση μετώπου 
+            node=front.pop(0)                               #Βγάζω την κατάσταση node απο το μέτωπο 
+            for child in find_children(node):               #Κλήση συνάρτησης εύρεσης απογόνων (βρίσκω τα παιδία της κατάστασηε node)
+                front.insert(0,child)                       #Προσθέτω τα παιδιά της node στην αρχή του μετώπου 
     elif method=='BFS' :
-        if front:
-            print("Front:")
-            print(front)
-            node = front.pop(0)
-            for child in find_children(node):     
-                front.append(child)
+        if front:                                           #Αν το μέτωπο δεν είναι κενό 
+            print("Front:")                         
+            print(front)                                    #Εμφάνιση μετώπου 
+            node = front.pop(0)                             #Βγάζω την κατάσταση node απο το μέτωπο
+            for child in find_children(node):               #Κλήση συνάρτησης εύρεσης απογόνων (βρίσκω τα παιδία της κατάστασηε node)
+                front.append(child)                         #Προσθέτω τα παιδιά της node sto τέλος της λίστας.
     elif method=='HC':
-        if front:
+        if front:                                           #Αν το μέτωπο δεν είναι κενό 
             print("Front:")
-            print(front)
-            children = []
-            node = front.pop(0)                # Βγάζω την 1η κατάσταση από το μέτωπο
-            for child in find_children(node):  # και βρίσκω τα παιδιά της node(της 1ης κατάστασης του μετώπου).
-                children.append(child)         # Αποθηκεύομαι τα παιδιά σε μία λίστα children
-            if children != 0:                  # Εφόσον υπάρχουν παιδιά, θα ταξινομίσουμε την λίστα sorted_children
-                i = len(children)              # και έπειτα θα τα καταχωρίσουμε με την σωστή σειρά στην front
-                sorted_children = sorted(children, key=tenants_sum)
-                for z in range(i):
-                    front.insert(z, sorted_children[z])
+            print(front)                                    #Εμφάνιση μετώπου 
+            children = []                           
+            node = front.pop(0)                             #Βγάζω την κατάσταση node απο το μέτωπο
+            for child in find_children(node):               #Κλήση συνάρτησης εύρεσης απογόνων (βρίσκω τα παιδία της κατάστασηε node)
+                children.append(child)                      #Αποθεκεύω τα παιδία της κατάστασης node στην λίστα children
+            if children != 0:                               #Αν η λίστα children δεν είναι κενή 
+                i = len(children)                           #Βρίσκω το μέγεθος της λίστας 
+                sort_children=sorted(children,key=tenants)  #Ταξινομώ τα παιδία με βάση της συνάρτηση tenants και τυα αποθηκεύω στην λίστα sort_children
+                for z in range(i):                          
+                    front.insert(z, sort_children[z])       #Προσθέτω τα ταξινομημένα παιδια στο μέτωπο 
     return front
 
+#Τελεστές μετάβασης 
+#Τελεστής μετάβασης Πήγαινε στον πρώτο όροφο
 def go_to_floor1(state):
     if state[5]<8 and state[1]>0 and state[0]!=1:
         if state[1]>8-state[5]:
@@ -128,7 +137,7 @@ def go_to_floor1(state):
         else:
             new_state = [1] + [0] + [state[2]] + [state[3]] + [state[4]] + [state[1] + state[5]]
         return new_state
-        
+#Τελεστής μετάβασης Πήγαινε στον δεύτερο όροφο        
 def go_to_floor2(state):
     if state[5]<8 and state[2]>0 and state[0]!=2:
         if state[2]>8-state[5]:
@@ -136,7 +145,7 @@ def go_to_floor2(state):
         else:
             new_state = [2]+ [state[1]] + [0] + [state[3]] + [state[4]] + [state[2] + state[5]]
         return new_state
-
+#Τελεστής μετάβασης Πήγαινε στον τρίτο όροφο
 def go_to_floor3(state):
     if state[5]<8 and state[3]>0 and state[0]!=3:
         if state[3]>8-state[5]:
@@ -144,7 +153,7 @@ def go_to_floor3(state):
         else:
             new_state = [3] + [state[1]] + [state[2]] + [0] + [state[4]] + [state[3] + state[5]]
         return new_state
-
+#Τελεστής μετάβασης Πήγαινε στον τέταρτο όροφο
 def go_to_floor4(state):
     if state[5]<8 and state[4]>0 and state[0]!=4:
         if state[4]>8-state[5]:
@@ -152,7 +161,7 @@ def go_to_floor4(state):
         else:
             new_state = [4]  + [state[1]] + [state[2]] + [state[3]] + [0] + [state[4] + state[5]]
         return new_state
-
+#Τελεστής μετάβασης Πήγαινε στην ταράτσα
 def go_to_roof(state):
     if state[5]==8 or (state[1]==0 and state[2]==0 and state[3]==0 and state[4]==0) and state[1]!=5:
         new_state = [5] + [state[1]] + [state[2]] + [state[3]] + [state[4]] + [0]
@@ -161,7 +170,6 @@ def go_to_roof(state):
     return new_state
 
 def find_solution(front, queue, closed, goal, method):
-   
     if not front:
         print('_NO_SOLUTION_FOUND_')
     
@@ -173,6 +181,7 @@ def find_solution(front, queue, closed, goal, method):
         find_solution(new_front, new_queue, closed, goal, method)
     elif front[0]==goal:
         print('_GOAL_FOUND_')
+        print()
         print(front[0])
         print(queue[0])
     else:
@@ -184,12 +193,10 @@ def find_solution(front, queue, closed, goal, method):
         closed_copy=copy.deepcopy(closed)
         find_solution(front_children, queue_children, closed_copy, goal, method)
 
-def main():
-
-    initial_state = [0, 9, 4, 12, 7, 0]
-    goal = [5, 0, 0, 0, 0, 0]
-
-    while 1:
+#Συνάρτηση επιλογής μεθόδου αναζήτησης
+def select_method(): 
+    while(1):
+        #Επιλογή μεταξύ των αλγορίθμων BFS,DFS και HC για την επίλυση του προβλήματος 
         print("This program solves the problem of evacuating a building to the roof using different searching algorithms.")
         print("Select between the given searching algorithms:")
         print("1. DFS (Depth First Search)\n2. BFS (Breadth First Search)\n3. HC (Hill Climbing)\n4. Exit")
@@ -208,8 +215,20 @@ def main():
             print("Exiting...")
             exit()
         else:
-            print("Wrong input")    
+            print("Wrong input") 
+    return method
+
+def main():
+    #Αρχική κατάσταση 
+    initial_state = [0, 9, 4, 12, 7, 0] 
+    #Τελική Κατάσταση (Στόχος)
+    goal = [5, 0, 0, 0, 0, 0] 
+
+    #Κλήση συνάρτησεις επιλογής μεθόδου
+    method=select_method()
+      
     print("Begin Searching\n---",method,"---")
+    #Κλήση της συνάρτησης find_solution για την εύρεση λύσης 
     find_solution(make_front(initial_state),make_queue(initial_state),[],goal,method)
         
 if __name__ == "__main__":
